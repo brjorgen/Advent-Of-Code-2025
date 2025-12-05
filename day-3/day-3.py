@@ -1,15 +1,6 @@
-def biggest_and_index(nums):
-    nums = list(map(int, nums))
-    biggest_value = nums[0]
-    biggest_index = 0
-
-    biggest_index = nums.index(max(nums))
-    biggest_value = max(nums)
-
-    return biggest_value, biggest_index
-
 def find_biggest_2_digit_pair(nums):
-    biggest_value, index = biggest_and_index(nums)
+    biggest_value = max(nums)
+    index = nums.index(max(nums))
 
     nums[index] = 0
     l = nums[0:index] if index != 0 else None
@@ -24,8 +15,8 @@ def find_biggest_2_digit_pair(nums):
         ans = f"{l}{biggest_value}"
 
     else:
-        biggest_l, biggest_index_l = biggest_and_index(list(l))
-        biggest_r, biggest_index_r = biggest_and_index(list(r))
+        biggest_l = max(list(l))
+        biggest_r = max(list(r))
         value_l = f"{biggest_l}{biggest_value}"
         value_r = f"{biggest_value}{biggest_r}"
 
