@@ -8,17 +8,17 @@ def find_biggest_2_digit_pair(nums):
 
     if l == None:
         r = max(nums)
-        ans = f"{biggest_value}{r}"
+        ans = int(f"{biggest_value}{r}")
 
     elif r == None:
         l = max(nums)
-        ans = f"{l}{biggest_value}"
+        ans = int(f"{l}{biggest_value}")
 
     else:
         biggest_l = max(list(l))
         biggest_r = max(list(r))
-        value_l = f"{biggest_l}{biggest_value}"
-        value_r = f"{biggest_value}{biggest_r}"
+        value_l = int(f"{biggest_l}{biggest_value}")
+        value_r = int(f"{biggest_value}{biggest_r}")
 
         if value_l > value_r:
             ans = value_l
@@ -39,6 +39,6 @@ def main():
             if biggest_2_digit_pair != None:
                 ans.append(biggest_2_digit_pair)
 
-    print(sum(list(map(int, ans))))
+    print(sum(ans))
 
 main()
