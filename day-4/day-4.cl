@@ -1,4 +1,27 @@
-;; Yikes!
+(defun is-neighbor (cell)
+  (and cell (char= cell #\@)))
+
+(defun count-neighbors (row col grid)
+  "Define all checkable directions, check neighbors in all of them."
+  (let ((directions '((-1 . -1)
+                      (0  . -1)
+                      (1  . -1)
+                      (-1 . 0)
+                      (1  . 0)
+                      (-1 . 1)
+                      (0  . 1)
+                      (1  . 1))))
+
+    (count t
+	   (mapcar (lambda (dir)
+		     (let* ((r (+ row (car dir)))					
+			    (c (+ col (cdr dir)))
+			    (neighbor (if (and (>= r 0) (< r (length grid))
+					       (>= c 0) (< c (length (car grid))))
+					  (char (nth r grid) c)
+					  nil)))
+		     (is-neighbor neighbor)))
+		   directions))))
 
 (defun read-file-into-grid (filename)
   "Read a text file into a list of strings (rows)."
@@ -7,36 +30,21 @@
           while line
           collect line)))
 
-(defun count-at-neighbors (grid row col)
-  "Count @ symbols around the cell at (row, col)."
-  (let ((rows (length grid))
-        (cols (length (first grid)))
-        (count 0))
-    (loop for dr from -1 to 1 do
-      (loop for dc from -1 to 1 do
-        (unless (and (= dr 0) (= dc 0)) ; skip the center
-          (let ((r (+ row dr))
-                (c (+ col dc)))
-            (when (and (>= r 0) (< r rows)
-                       (>= c 0) (< c cols)
-                       (char= (char (nth r grid) c) #\@))
-              (incf count))))))
-    count))
+(defun has-less-than-four-neighbors (row col grid)
+  "Check we are on an @ symbol, count neighbours when it's the case."
+  (and (char= (char (nth row grid) col) #\@)
+       (< (count-neighbors row col grid) 4)))
 
-(defun count-rolls (grid)
-  "Count @ symbols with fewer than 4 neighbors."
-  (let ((rows (length grid))
-        (cols (length (first grid)))
-        (total 0))
-    (loop for r from 0 below rows do
-      (loop for c from 0 below cols do
-        (when (char= (char (nth r grid) c) #\@)
-          (when (< (count-at-neighbors grid r c) 4)
-            (incf total)))))
-    total))
+(defun count-removable-rolls (grid)
+  "Count all @ symbols in the grid with fewer than 4 neighbors."
+  (count t
+         (mapcan (lambda (row row-index)
+                   (map 'list (lambda (col col-index)
+				(has-less-than-four-neighbors row-index col-index grid))
+                        row
+                        (loop for i from 0 below (length row) collect i)))
+                 grid
+                 (loop for i from 0 below (length grid) collect i))))
 
-(defun count-rolls-in-file (filename)
-  (let ((grid (read-file-into-grid filename)))
-    (count-rolls grid)))
-
-(count-rolls-in-file "input.txt")
+(setq grid (read-file-into-grid "input.txt"))
+(count-removable-rolls grid)
